@@ -1,7 +1,7 @@
 import { forwardRef } from 'react'
 import * as StyledCheckbox from './styled/checkbox'
 
-export interface CheckboxProps extends StyledCheckbox.RootProps {}
+export type CheckboxProps = StyledCheckbox.RootProps
 
 export const Checkbox = forwardRef<HTMLLabelElement, CheckboxProps>((props, ref) => {
   const { children, ...rootProps } = props

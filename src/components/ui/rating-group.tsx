@@ -2,7 +2,7 @@
 import { forwardRef } from 'react'
 import * as StyledRatingGroup from './styled/rating-group'
 
-export interface RatingGroupProps extends StyledRatingGroup.RootProps {}
+export type RatingGroupProps = StyledRatingGroup.RootProps
 
 export const RatingGroup = forwardRef<HTMLDivElement, RatingGroupProps>((props, ref) => {
   const { children, ...rootProps } = props

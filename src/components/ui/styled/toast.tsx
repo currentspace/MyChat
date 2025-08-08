@@ -35,7 +35,6 @@ export const Title = withContext<HTMLDivElement, Assign<HTMLStyledProps<'div'>, 
 export {
   ToastContext as Context,
   Toaster,
-  createToaster,
   type ToastContextProps as ContextProps,
   type ToasterProps,
 } from '@ark-ui/react/toast'

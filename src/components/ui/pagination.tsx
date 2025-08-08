@@ -4,7 +4,7 @@ import { Button } from './button'
 import { IconButton } from './styled/icon-button'
 import * as StyledPagination from './styled/pagination'
 
-export interface PaginationProps extends StyledPagination.RootProps {}
+export type PaginationProps = StyledPagination.RootProps
 
 export const Pagination = forwardRef<HTMLElement, PaginationProps>((props, ref) => {
   return (

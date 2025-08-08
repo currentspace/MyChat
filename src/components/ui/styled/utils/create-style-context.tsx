@@ -19,13 +19,13 @@ type Slot<R extends Recipe> = keyof ReturnType<R>
 interface Options { forwardProps?: string[] }
 
 const shouldForwardProp = (prop: string, variantKeys: string[], options: Options = {}) =>
-  options.forwardProps?.includes(prop) || (!variantKeys.includes(prop) && !isCssProperty(prop))
+  options.forwardProps?.includes(prop) ?? (!variantKeys.includes(prop) && !isCssProperty(prop))
 
 export const createStyleContext = <R extends Recipe>(recipe: R) => {
   const StyleContext = createContext<Record<Slot<R>, string> | null>(null)
 
-  const withRootProvider = <P extends {}>(Component: ElementType) => {
-    const StyledComponent = (props: P) => {
+  const withRootProvider = (Component: ElementType) => {
+    const StyledComponent = (props: Props) => {
       const [variantProps, otherProps] = recipe.splitVariantProps(props)
       const slotStyles = recipe(variantProps) as Record<Slot<R>, string>
 
@@ -59,13 +59,13 @@ export const createStyleContext = <R extends Recipe>(recipe: R) => {
           <StyledComponent
             {...otherProps}
             ref={ref}
-            className={cx(slotStyles?.[slot], props.className)}
+            className={cx(slotStyles[slot], props.className)}
           />
         </StyleContext.Provider>
       )
     })
-    // @ts-expect-error
-    StyledSlotProvider.displayName = Component.displayName || Component.name
+    // @ts-expect-error - Component may not have displayName property
+    StyledSlotProvider.displayName = Component.displayName ?? Component.name
 
     return StyledSlotProvider
   }
@@ -78,11 +78,11 @@ export const createStyleContext = <R extends Recipe>(recipe: R) => {
     const StyledSlotComponent = forwardRef<T, P>((props, ref) => {
       const slotStyles = useContext(StyleContext)
       return (
-        <StyledComponent {...props} ref={ref} className={cx(slotStyles?.[slot], props.className)} />
+        <StyledComponent {...props} ref={ref} className={cx(slotStyles?.[slot] ?? '', props.className)} />
       )
     })
-    // @ts-expect-error
-    StyledSlotComponent.displayName = Component.displayName || Component.name
+    // @ts-expect-error - Component may not have displayName property
+    StyledSlotComponent.displayName = Component.displayName ?? Component.name
 
     return StyledSlotComponent
   }

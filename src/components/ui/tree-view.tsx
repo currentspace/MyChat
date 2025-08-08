@@ -7,7 +7,7 @@ export const TreeView = forwardRef<HTMLDivElement, StyledTreeView.RootProps>((pr
   return (
     <StyledTreeView.Root ref={ref} {...props}>
       <StyledTreeView.Tree>
-        {/* @ts-expect-error */}
+        {/* @ts-expect-error - collection.rootNode type is not fully exported from Ark UI */}
         {props.collection.rootNode.children.map((node, index) => (
           <TreeNode key={node.id} node={node} indexPath={[index]} />
         ))}
@@ -34,7 +34,7 @@ const TreeNode = (props: StyledTreeView.NodeProviderProps) => {
           </StyledTreeView.BranchControl>
           <StyledTreeView.BranchContent>
             <StyledTreeView.BranchIndentGuide />
-            {/* @ts-expect-error */}
+            {/* @ts-expect-error - node.children type is not fully exported from Ark UI */}
             {node.children.map((child, index) => (
               <TreeNode key={child.id} node={child} indexPath={[...indexPath, index]} />
             ))}
