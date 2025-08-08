@@ -12,7 +12,15 @@ import {
   Sparkles
 } from 'lucide-react'
 
-const features = [
+type FeatureColor = 'purple' | 'blue' | 'green' | 'orange' | 'cyan' | 'yellow' | 'red' | 'indigo' | 'pink'
+
+const features: {
+  icon: typeof Palette
+  title: string
+  description: string
+  badge: string
+  color: FeatureColor
+}[] = [
   {
     icon: Palette,
     title: 'Beautiful Design',
@@ -118,7 +126,7 @@ export function FeaturesSection() {
                       >
                         <Icon size={24} />
                       </Box>
-                      <Badge variant="subtle" size="sm" colorPalette={feature.color as any}>
+                      <Badge variant="subtle" size="sm" colorPalette={feature.color}>
                         {feature.badge}
                       </Badge>
                     </Box>

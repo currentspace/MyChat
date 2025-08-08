@@ -11,7 +11,7 @@ export interface SliderProps extends StyledSlider.RootProps {
 }
 
 export const Slider = forwardRef<HTMLDivElement, SliderProps>((props, ref) => {
-  const { children, marks, ...rootProps } = props
+  const { children, marks: _marks, ...rootProps } = props
 
   return (
     <StyledSlider.Root ref={ref} {...rootProps}>

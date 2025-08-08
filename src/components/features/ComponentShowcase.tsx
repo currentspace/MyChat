@@ -17,6 +17,11 @@ import {
   Avatar
 } from '@/components/ui'
 import { Card, Alert, Tabs, Accordion, Dialog, Tooltip, Select, createListCollection, RadioGroup } from '@/components/ui'
+import type { 
+  RadioGroupValueChangeDetails,
+  DialogOpenChangeDetails,
+  TabsValueChangeDetails
+} from '@ark-ui/react'
 import { Slider } from '@/components/ui/slider'
 import { 
   ChevronRight, 
@@ -151,7 +156,7 @@ export function ComponentShowcase() {
                     </Select.Control>
                     <Select.Positioner>
                       <Select.Content>
-                        {selectCollection.items.map((item: any) => (
+                        {selectCollection.items.map((item) => (
                           <Select.Item key={item.value} item={item}>
                             <Select.ItemText>{item.label}</Select.ItemText>
                             <Select.ItemIndicator>
@@ -189,7 +194,7 @@ export function ComponentShowcase() {
 
                 <Box>
                   <Text fontWeight="semibold" mb="3">Radio Group</Text>
-                  <RadioGroup.Root value={radioValue} onValueChange={(e: any) => { setRadioValue(e.value ?? 'option1'); }}>
+                  <RadioGroup.Root value={radioValue} onValueChange={(e: RadioGroupValueChangeDetails) => { setRadioValue(e.value ?? 'option1'); }}>
                     <VStack gap="2" alignItems="start">
                       <RadioGroup.Item value="option1">
                         <RadioGroup.ItemControl />
@@ -211,7 +216,7 @@ export function ComponentShowcase() {
                   <Text fontWeight="semibold" mb="3">Slider</Text>
                   <Slider 
                     value={sliderValue} 
-                    onValueChange={(e: any) => { setSliderValue(e.value); }}
+                    onValueChange={(e) => { setSliderValue(e.value); }}
                     max={100}
                   />
                   <Text fontSize="sm" color="fg.muted" mt="2">Value: {sliderValue[0]}</Text>
@@ -351,7 +356,7 @@ export function ComponentShowcase() {
                 <Text fontWeight="semibold" mb="3">Dialog</Text>
                 <Button onClick={() => { setDialogOpen(true); }}>Open Dialog</Button>
                 
-                <Dialog.Root open={dialogOpen} onOpenChange={(e: any) => { setDialogOpen(e.open); }}>
+                <Dialog.Root open={dialogOpen} onOpenChange={(e: DialogOpenChangeDetails) => { setDialogOpen(e.open); }}>
                   <Dialog.Backdrop />
                   <Dialog.Positioner>
                     <Dialog.Content>
@@ -391,7 +396,7 @@ export function ComponentShowcase() {
               {/* Tabs */}
               <Box>
                 <Text fontWeight="semibold" mb="3">Tabs</Text>
-                <Tabs.Root value={selectedTab} onValueChange={(e: any) => { setSelectedTab(e.value); }}>
+                <Tabs.Root value={selectedTab} onValueChange={(e: TabsValueChangeDetails) => { setSelectedTab(e.value); }}>
                   <Tabs.List>
                     <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
                     <Tabs.Trigger value="features">Features</Tabs.Trigger>
