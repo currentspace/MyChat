@@ -4,6 +4,10 @@
 name = "mychat"
 compatibility_date = "2025-08-08"
 
+# Observability Configuration
+[observability.logs]
+enabled = false
+
 # Static Assets Configuration
 [assets]
 directory = "./dist"  # Vite build output directory
