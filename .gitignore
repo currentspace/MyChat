@@ -29,3 +29,8 @@ src/styled-system
 # Cloudflare
 .wrangler
 .dev.vars
+
+# Environment variables
+.env
+.env.local
+.env.production

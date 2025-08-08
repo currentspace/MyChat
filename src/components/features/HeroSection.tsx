@@ -2,8 +2,12 @@ import { Box, Container, Flex, HStack, VStack } from '@/styled-system/jsx'
 import { Button, Badge, Text } from '@/components/ui'
 import { ArrowRight, Sparkles, Zap, Shield, Layers } from 'lucide-react'
 import { css } from '@/styled-system/css'
+import { Link } from '@tanstack/react-router'
+import { useAuth } from '@/lib/auth/auth-hooks'
 
 export function HeroSection() {
+  const { user } = useAuth()
+  
   return (
     <Box 
       className={css({
@@ -66,10 +70,12 @@ export function HeroSection() {
 
           {/* CTA Buttons */}
           <HStack gap="4" flexWrap="wrap" justify="center">
-            <Button size="lg" variant="solid">
-              Get Started
-              <ArrowRight size={20} />
-            </Button>
+            <Link to="/chat">
+              <Button size="lg" variant="solid">
+                {user ? 'Open Chat' : 'Get Started'}
+                <ArrowRight size={20} />
+              </Button>
+            </Link>
             <Button size="lg" variant="outline">
               View Components
             </Button>

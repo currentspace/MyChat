@@ -2,7 +2,7 @@
 # For React SPA with client-side routing
 
 name = "mychat"
-compatibility_date = "2024-09-19"
+compatibility_date = "2025-08-08"
 
 # Static Assets Configuration
 [assets]
@@ -12,16 +12,20 @@ not_found_handling = "single-page-application"  # Returns index.html for client-
 # Environment variables
 [vars]
 # Global variables available in all environments
-# API_URL = "https://api.example.com"
+FRONTEND_URL = "http://localhost:5173"
+
+# OAuth Configuration - Set these as secrets in Cloudflare dashboard:
+# GOOGLE_CLIENT_ID = "your-client-id"
+# GOOGLE_CLIENT_SECRET = "your-client-secret"  
+# JWT_SECRET = "your-jwt-secret"
 
 [env.production.vars]
 # Production-specific variables
-# NODE_ENV = "production"
+FRONTEND_URL = "https://mychat.current.space"
 
 [env.preview.vars]
 # Preview/staging variables  
-# NODE_ENV = "preview"
-# DEBUG = "true"
+FRONTEND_URL = "https://preview.mychat.current.space"
 
 # Optional: If you add API routes later
 # [assets]
