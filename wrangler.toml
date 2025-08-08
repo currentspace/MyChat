@@ -11,6 +11,8 @@ directory = "./dist"
 binding = "ASSETS"
 # SPA configuration - serves index.html for unmatched routes
 not_found_handling = "single-page-application"
+# CRITICAL: Run Worker first for API routes (otherwise static assets take precedence)
+run_worker_first = ["/api/*"]
 
 # Observability for debugging
 [observability]
@@ -38,9 +40,6 @@ FRONTEND_URL = "https://mychat.current.space"
 [env.preview.vars]
 FRONTEND_URL = "https://preview.mychat.current.space"
 
-# Optional: If you add API routes later
-# [assets]
-# run_worker_first = ["/api/*"]  # Routes that should invoke Worker first
 
 # Optional: Bindings for Worker functionality
 # [[kv_namespaces]]
