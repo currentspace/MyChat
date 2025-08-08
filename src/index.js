@@ -4,11 +4,24 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     
+    // Log for debugging
+    console.log('Worker received request:', request.method, url.pathname);
+    
     // Handle API routes - Worker processes these before static assets
     if (url.pathname.startsWith('/api/')) {
+      console.log('Handling API route:', url.pathname);
       // CORS headers for API routes
+      // Allow both the configured URL and the actual production domain
+      const origin = request.headers.get('Origin');
+      const allowedOrigins = [
+        'https://mychat.current.space',
+        'http://localhost:5173',
+        'http://localhost:8787',
+        env.FRONTEND_URL
+      ].filter(Boolean);
+      
       const corsHeaders = {
-        'Access-Control-Allow-Origin': env.FRONTEND_URL || 'https://mychat.current.space',
+        'Access-Control-Allow-Origin': allowedOrigins.includes(origin) ? origin : 'https://mychat.current.space',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         'Access-Control-Allow-Credentials': 'true',
@@ -33,6 +46,7 @@ export default {
           return handleLogout(request, env, corsHeaders);
         }
         
+        console.log('Route not found:', url.pathname);
         return new Response(JSON.stringify({ error: 'Not Found' }), {
           status: 404,
           headers: corsHeaders
@@ -56,6 +70,17 @@ export default {
 // Google OAuth handler
 async function handleGoogleAuth(request, env, headers) {
   try {
+    // Check if secrets are configured
+    if (!env.GOOGLE_CLIENT_ID || !env.JWT_SECRET) {
+      console.error('Missing required secrets: GOOGLE_CLIENT_ID or JWT_SECRET');
+      return new Response(JSON.stringify({ 
+        error: 'Server configuration error - OAuth secrets not configured' 
+      }), {
+        status: 500,
+        headers
+      });
+    }
+    
     const { credential } = await request.json();
     
     if (!credential) {
