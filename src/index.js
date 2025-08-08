@@ -1,9 +1,10 @@
 // Main Worker entry point for handling API routes and static assets
+// 2025 Best Practices for Cloudflare Workers with OAuth
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     
-    // Handle API routes
+    // Handle API routes - Worker processes these before static assets
     if (url.pathname.startsWith('/api/')) {
       // CORS headers for API routes
       const corsHeaders = {
@@ -46,6 +47,8 @@ export default {
     }
     
     // Serve static assets for all other routes
+    // In 2025, this is the standard way - assets are automatically served
+    // with proper caching and SPA support via not_found_handling config
     return env.ASSETS.fetch(request);
   }
 };

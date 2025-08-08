@@ -1,16 +1,20 @@
 # Cloudflare Workers Configuration with Static Assets
-# For React SPA with client-side routing
+# 2025 Modern Configuration for React SPA
 
 name = "mychat"
 main = "src/index.js"
-compatibility_date = "2024-09-19"
+compatibility_date = "2025-01-01"  # Use latest compatibility date
 
-# Observability Configuration
-[observability.logs]
+# Static Assets Configuration (2025 standard)
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+# SPA configuration - serves index.html for unmatched routes
+not_found_handling = "single-page-application"
+
+# Observability for debugging
+[observability]
 enabled = true  # Enable for debugging OAuth issues, disable once stable
-
-# Static Assets Configuration
-assets = { directory = "./dist", binding = "ASSETS" }
 
 # Environment variables
 [vars]
@@ -22,12 +26,22 @@ FRONTEND_URL = "http://localhost:5173"
 # GOOGLE_CLIENT_SECRET = "your-client-secret"  
 # JWT_SECRET = "your-jwt-secret"
 
+# Development environment
+[env.development]
+name = "mychat-dev"
+[env.development.vars]
+FRONTEND_URL = "http://localhost:5173"
+
+# Production environment
+[env.production]
+name = "mychat-production"
 [env.production.vars]
-# Production-specific variables
 FRONTEND_URL = "https://mychat.current.space"
 
+# Preview/staging environment
+[env.preview]
+name = "mychat-preview"
 [env.preview.vars]
-# Preview/staging variables  
 FRONTEND_URL = "https://preview.mychat.current.space"
 
 # Optional: If you add API routes later
