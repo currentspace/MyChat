@@ -1,19 +1,17 @@
 'use client'
 import type { Assign } from '@ark-ui/react'
 import { Popover } from '@ark-ui/react/popover'
-import { type PopoverVariantProps, popover } from '@/styled-system/recipes'
+import { popover } from '@/styled-system/recipes'
 import type { ComponentProps, HTMLStyledProps } from '@/styled-system/types'
 import { createStyleContext } from './utils/create-style-context'
 
 const { withRootProvider, withContext } = createStyleContext(popover)
 
 export type RootProviderProps = ComponentProps<typeof RootProvider>
-export const RootProvider = withRootProvider<
-  Assign<Popover.RootProviderProps, PopoverVariantProps>
->(Popover.RootProvider)
+export const RootProvider = withRootProvider(Popover.RootProvider)
 
 export type RootProps = ComponentProps<typeof Root>
-export const Root = withRootProvider<Assign<Popover.RootProps, PopoverVariantProps>>(Popover.Root)
+export const Root = withRootProvider(Popover.Root)
 
 export const Anchor = withContext<
   HTMLDivElement,

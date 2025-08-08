@@ -1,19 +1,17 @@
 'use client'
 import type { Assign } from '@ark-ui/react'
 import { Menu } from '@ark-ui/react/menu'
-import { type MenuVariantProps, menu } from '@/styled-system/recipes'
+import { menu } from '@/styled-system/recipes'
 import type { ComponentProps, HTMLStyledProps } from '@/styled-system/types'
 import { createStyleContext } from './utils/create-style-context'
 
 const { withRootProvider, withContext } = createStyleContext(menu)
 
 export type RootProviderProps = ComponentProps<typeof RootProvider>
-export const RootProvider = withRootProvider<Assign<Menu.RootProviderProps, MenuVariantProps>>(
-  Menu.RootProvider,
-)
+export const RootProvider = withRootProvider(Menu.RootProvider)
 
 export type RootProps = ComponentProps<typeof Root>
-export const Root = withRootProvider<Assign<Menu.RootProps, MenuVariantProps>>(Menu.Root)
+export const Root = withRootProvider(Menu.Root)
 
 export const Arrow = withContext<
   HTMLDivElement,

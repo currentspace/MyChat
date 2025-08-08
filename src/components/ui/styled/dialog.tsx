@@ -1,19 +1,17 @@
 'use client'
 import type { Assign } from '@ark-ui/react'
 import { Dialog } from '@ark-ui/react/dialog'
-import { type DialogVariantProps, dialog } from '@/styled-system/recipes'
+import { dialog } from '@/styled-system/recipes'
 import type { ComponentProps, HTMLStyledProps } from '@/styled-system/types'
 import { createStyleContext } from './utils/create-style-context'
 
 const { withRootProvider, withContext } = createStyleContext(dialog)
 
 export type RootProviderProps = ComponentProps<typeof RootProvider>
-export const RootProvider = withRootProvider<Assign<Dialog.RootProviderProps, DialogVariantProps>>(
-  Dialog.RootProvider,
-)
+export const RootProvider = withRootProvider(Dialog.RootProvider)
 
 export type RootProps = ComponentProps<typeof Root>
-export const Root = withRootProvider<Assign<Dialog.RootProps, DialogVariantProps>>(Dialog.Root)
+export const Root = withRootProvider(Dialog.Root)
 
 export const Backdrop = withContext<
   HTMLDivElement,

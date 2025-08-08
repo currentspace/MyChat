@@ -1,0 +1,6 @@
+# Exclude source maps and other development files
+*.map
+*.md
+.DS_Store
+.env*
+*.log

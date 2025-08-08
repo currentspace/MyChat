@@ -1,21 +1,17 @@
 'use client'
 import type { Assign } from '@ark-ui/react'
 import { HoverCard } from '@ark-ui/react/hover-card'
-import { type HoverCardVariantProps, hoverCard } from '@/styled-system/recipes'
+import { hoverCard } from '@/styled-system/recipes'
 import type { ComponentProps, HTMLStyledProps } from '@/styled-system/types'
 import { createStyleContext } from './utils/create-style-context'
 
 const { withRootProvider, withContext } = createStyleContext(hoverCard)
 
 export type RootProviderProps = ComponentProps<typeof RootProvider>
-export const RootProvider = withRootProvider<
-  Assign<HoverCard.RootProviderProps, HoverCardVariantProps>
->(HoverCard.RootProvider)
+export const RootProvider = withRootProvider(HoverCard.RootProvider)
 
 export type RootProps = ComponentProps<typeof Root>
-export const Root = withRootProvider<Assign<HoverCard.RootProps, HoverCardVariantProps>>(
-  HoverCard.Root,
-)
+export const Root = withRootProvider(HoverCard.Root)
 
 export const Arrow = withContext<
   HTMLDivElement,

@@ -2,19 +2,17 @@
 import type { Assign, PolymorphicProps } from '@ark-ui/react'
 import { Dialog } from '@ark-ui/react/dialog'
 import { ark } from '@ark-ui/react/factory'
-import { type DrawerVariantProps, drawer } from '@/styled-system/recipes'
+import { drawer } from '@/styled-system/recipes'
 import type { ComponentProps, HTMLStyledProps } from '@/styled-system/types'
 import { createStyleContext } from './utils/create-style-context'
 
 const { withRootProvider, withContext } = createStyleContext(drawer)
 
 export type RootProviderProps = ComponentProps<typeof RootProvider>
-export const RootProvider = withRootProvider<
-  Assign<Dialog.RootProviderBaseProps, DrawerVariantProps>
->(Dialog.RootProvider)
+export const RootProvider = withRootProvider(Dialog.RootProvider)
 
 export type RootProps = ComponentProps<typeof Root>
-export const Root = withRootProvider<Assign<Dialog.RootProps, DrawerVariantProps>>(Dialog.Root)
+export const Root = withRootProvider(Dialog.Root)
 
 export const Backdrop = withContext<
   HTMLDivElement,
