@@ -13,7 +13,7 @@ export interface ButtonProps extends StyledButtonProps, ButtonLoadingProps {}
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) => {
   const { loading, disabled, loadingText, children, ...rest } = props
 
-  const trulyDisabled = loading || disabled
+  const trulyDisabled = loading ?? disabled
 
   return (
     <StyledButton disabled={trulyDisabled} ref={ref} {...rest}>
@@ -22,10 +22,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>((props, ref) =>
           <ButtonSpinner />
           <styled.span opacity={0}>{children}</styled.span>
         </>
-      ) : loadingText ? (
-        loadingText
       ) : (
-        children
+        loadingText ?? children
       )}
     </StyledButton>
   )

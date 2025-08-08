@@ -1,6 +1,6 @@
 import { Box, Container, Flex, Grid, HStack, VStack } from '@/styled-system/jsx'
 import { Text, Link, Divider, IconButton } from '@/components/ui'
-import { Github, Twitter, Globe, Heart } from 'lucide-react'
+import { Globe, Heart } from 'lucide-react'
 import { css } from '@/styled-system/css'
 
 const footerLinks = {
@@ -58,10 +58,10 @@ export function Footer() {
               </Text>
               <HStack gap="2">
                 <IconButton variant="ghost" size="sm" aria-label="GitHub">
-                  <Github size={18} />
+                  <Globe size={18} />
                 </IconButton>
                 <IconButton variant="ghost" size="sm" aria-label="Twitter">
-                  <Twitter size={18} />
+                  <Globe size={18} />
                 </IconButton>
                 <IconButton variant="ghost" size="sm" aria-label="Website">
                   <Globe size={18} />

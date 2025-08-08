@@ -1,6 +1,37 @@
+# Cloudflare Pages Configuration
+# Requires Wrangler v3.45.0+ and V2 build system
+
+# Required fields for Pages
 name = "mychat"
-compatibility_date = "2024-01-01"
 pages_build_output_dir = "dist"
 
-[site]
-bucket = "./dist"
+# Compatibility settings
+compatibility_date = "2025-07-19"
+
+# Environment variables
+[vars]
+# Global variables available in all environments
+# API_URL = "https://api.example.com"
+
+[env.production.vars]
+# Production-specific variables
+# NODE_ENV = "production"
+
+[env.preview.vars]
+# Preview/staging variables  
+# NODE_ENV = "preview"
+# DEBUG = "true"
+
+# Optional: Bindings for Pages Functions
+# [[kv_namespaces]]
+# binding = "MY_KV"
+# id = "xxxxxxxxxxxxx"
+
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "my-database"
+# database_id = "xxxxxxxxxxxxx"
+
+# Note: Headers and redirects should be configured in:
+# - public/_headers for custom HTTP headers
+# - public/_redirects for URL redirects

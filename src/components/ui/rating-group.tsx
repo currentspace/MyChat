@@ -29,7 +29,7 @@ export const RatingGroup = forwardRef<HTMLDivElement, RatingGroupProps>((props, 
 
 RatingGroup.displayName = 'RatingGroup'
 
-type IconProps = {
+interface IconProps {
   isHalf: boolean
 }
 

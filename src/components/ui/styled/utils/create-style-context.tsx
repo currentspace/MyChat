@@ -11,12 +11,12 @@ import { cx } from '@/styled-system/css'
 import { type StyledComponent, isCssProperty, styled } from '@/styled-system/jsx'
 
 type Props = Record<string, unknown>
-type Recipe = {
+interface Recipe {
   (props?: Props): Props
   splitVariantProps: (props: Props) => [Props, Props]
 }
 type Slot<R extends Recipe> = keyof ReturnType<R>
-type Options = { forwardProps?: string[] }
+interface Options { forwardProps?: string[] }
 
 const shouldForwardProp = (prop: string, variantKeys: string[], options: Options = {}) =>
   options.forwardProps?.includes(prop) || (!variantKeys.includes(prop) && !isCssProperty(prop))

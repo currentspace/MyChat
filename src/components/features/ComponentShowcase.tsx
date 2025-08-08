@@ -127,7 +127,7 @@ export function ComponentShowcase() {
                   <Input 
                     placeholder="Enter your name..." 
                     value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
+                    onChange={(e) => { setInputValue(e.target.value); }}
                   />
                 </Box>
 
@@ -136,7 +136,7 @@ export function ComponentShowcase() {
                   <Textarea 
                     placeholder="Enter your message..." 
                     value={textareaValue}
-                    onChange={(e) => setTextareaValue(e.target.value)}
+                    onChange={(e) => { setTextareaValue(e.target.value); }}
                     rows={4}
                   />
                 </Box>
@@ -171,7 +171,7 @@ export function ComponentShowcase() {
                   <Text fontWeight="semibold" mb="3">Switch</Text>
                   <Switch 
                     checked={switchState}
-                    onCheckedChange={(e) => setSwitchState(e.checked)}
+                    onCheckedChange={(e) => { setSwitchState(e.checked); }}
                   >
                     Enable notifications
                   </Switch>
@@ -181,7 +181,7 @@ export function ComponentShowcase() {
                   <Text fontWeight="semibold" mb="3">Checkbox</Text>
                   <Checkbox 
                     checked={checkboxState}
-                    onCheckedChange={(e) => setCheckboxState(e.checked === true)}
+                    onCheckedChange={(e) => { setCheckboxState(e.checked === true); }}
                   >
                     I agree to the terms
                   </Checkbox>
@@ -189,7 +189,7 @@ export function ComponentShowcase() {
 
                 <Box>
                   <Text fontWeight="semibold" mb="3">Radio Group</Text>
-                  <RadioGroup.Root value={radioValue} onValueChange={(e: any) => setRadioValue(e.value || 'option1')}>
+                  <RadioGroup.Root value={radioValue} onValueChange={(e: any) => { setRadioValue(e.value ?? 'option1'); }}>
                     <VStack gap="2" alignItems="start">
                       <RadioGroup.Item value="option1">
                         <RadioGroup.ItemControl />
@@ -211,7 +211,7 @@ export function ComponentShowcase() {
                   <Text fontWeight="semibold" mb="3">Slider</Text>
                   <Slider 
                     value={sliderValue} 
-                    onValueChange={(e: any) => setSliderValue(e.value)}
+                    onValueChange={(e: any) => { setSliderValue(e.value); }}
                     max={100}
                   />
                   <Text fontSize="sm" color="fg.muted" mt="2">Value: {sliderValue[0]}</Text>
@@ -278,14 +278,14 @@ export function ComponentShowcase() {
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => setProgressValue(Math.max(0, progressValue - 10))}
+                      onClick={() => { setProgressValue(Math.max(0, progressValue - 10)); }}
                     >
                       -10%
                     </Button>
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => setProgressValue(Math.min(100, progressValue + 10))}
+                      onClick={() => { setProgressValue(Math.min(100, progressValue + 10)); }}
                     >
                       +10%
                     </Button>
@@ -349,9 +349,9 @@ export function ComponentShowcase() {
               {/* Dialog */}
               <Box>
                 <Text fontWeight="semibold" mb="3">Dialog</Text>
-                <Button onClick={() => setDialogOpen(true)}>Open Dialog</Button>
+                <Button onClick={() => { setDialogOpen(true); }}>Open Dialog</Button>
                 
-                <Dialog.Root open={dialogOpen} onOpenChange={(e: any) => setDialogOpen(e.open)}>
+                <Dialog.Root open={dialogOpen} onOpenChange={(e: any) => { setDialogOpen(e.open); }}>
                   <Dialog.Backdrop />
                   <Dialog.Positioner>
                     <Dialog.Content>
@@ -361,10 +361,10 @@ export function ComponentShowcase() {
                           Are you sure you want to proceed with this action?
                         </Dialog.Description>
                         <HStack gap="3" justify="flex-end">
-                          <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                          <Button variant="outline" onClick={() => { setDialogOpen(false); }}>
                             Cancel
                           </Button>
-                          <Button onClick={() => setDialogOpen(false)}>
+                          <Button onClick={() => { setDialogOpen(false); }}>
                             Confirm
                           </Button>
                         </HStack>
@@ -391,7 +391,7 @@ export function ComponentShowcase() {
               {/* Tabs */}
               <Box>
                 <Text fontWeight="semibold" mb="3">Tabs</Text>
-                <Tabs.Root value={selectedTab} onValueChange={(e: any) => setSelectedTab(e.value)}>
+                <Tabs.Root value={selectedTab} onValueChange={(e: any) => { setSelectedTab(e.value); }}>
                   <Tabs.List>
                     <Tabs.Trigger value="overview">Overview</Tabs.Trigger>
                     <Tabs.Trigger value="features">Features</Tabs.Trigger>
