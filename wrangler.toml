@@ -2,16 +2,15 @@
 # For React SPA with client-side routing
 
 name = "mychat"
-compatibility_date = "2025-08-08"
+main = "src/index.js"
+compatibility_date = "2024-09-19"
 
 # Observability Configuration
 [observability.logs]
 enabled = true  # Enable for debugging OAuth issues, disable once stable
 
 # Static Assets Configuration
-[assets]
-directory = "./dist"  # Vite build output directory
-not_found_handling = "single-page-application"  # Returns index.html for client-side routing
+assets = { directory = "./dist", binding = "ASSETS" }
 
 # Environment variables
 [vars]
