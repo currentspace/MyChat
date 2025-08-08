@@ -27,20 +27,14 @@ FRONTEND_URL = "http://localhost:5173"
 # JWT_SECRET = "your-jwt-secret"
 
 # Development environment
-[env.development]
-name = "mychat-dev"
 [env.development.vars]
 FRONTEND_URL = "http://localhost:5173"
 
 # Production environment
-[env.production]
-name = "mychat-production"
 [env.production.vars]
 FRONTEND_URL = "https://mychat.current.space"
 
 # Preview/staging environment
-[env.preview]
-name = "mychat-preview"
 [env.preview.vars]
 FRONTEND_URL = "https://preview.mychat.current.space"
 
