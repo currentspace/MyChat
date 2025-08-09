@@ -6,7 +6,6 @@ import * as Avatar from '@/components/ui/styled/avatar'
 import { Badge } from '@/components/ui/styled/badge'
 import { IconButton } from '@/components/ui/styled/icon-button'
 import * as Tooltip from '@/components/ui/styled/tooltip'
-import { Spinner } from '@/components/ui/styled/spinner'
 import { css } from '@/styled-system/css'
 import { 
   Send, MapPin, User, Settings, Plus, Copy, 
@@ -39,6 +38,16 @@ interface ModernChatInterfaceProps {
   user: {
     name: string
     picture: string
+  }
+}
+
+interface GeocodingResponse {
+  address?: {
+    city?: string
+    town?: string
+    village?: string
+    state?: string
+    country?: string
   }
 }
 
@@ -118,7 +127,7 @@ How can I assist you today?`,
       }
     } catch (error) {
       console.error('Chat error:', error)
-      handleError()
+      handleError(error instanceof Error ? error : new Error(String(error)))
     } finally {
       setIsLoading(false)
       scrollToBottom()
@@ -174,7 +183,7 @@ How can I assist you today?`,
                 fullContent += data.content
                 setMessages(prev => prev.map(msg => 
                   msg.id === assistantMessage.id 
-                    ? { ...msg, content: fullContent, streaming: false }
+                    ? { ...msg, content: fullContent, streaming: true }
                     : msg
                 ))
               }
@@ -184,6 +193,13 @@ How can I assist you today?`,
           }
         }
       }
+      
+      // Mark streaming as complete
+      setMessages(prev => prev.map(msg => 
+        msg.id === assistantMessage.id 
+          ? { ...msg, streaming: false }
+          : msg
+      ))
     }
   }
 
@@ -217,11 +233,23 @@ How can I assist you today?`,
     setMessages(prev => [...prev, assistantMessage])
   }
 
-  const handleError = () => {
+  const handleError = (error?: Error) => {
+    let content = '⚠️ Sorry, I encountered an error.'
+    
+    if (error?.message?.includes('API key')) {
+      content += ' Please ensure AI API keys are configured properly.'
+    } else if (error?.message?.includes('rate limit')) {
+      content += ' Rate limit exceeded. Please try again in a moment.'
+    } else if (error?.message?.includes('network')) {
+      content += ' Network error. Please check your connection.'
+    } else {
+      content += ' Please try again or switch to a different AI provider.'
+    }
+    
     const errorMessage: Message = {
       id: (Date.now() + 1).toString(),
       role: 'assistant',
-      content: '⚠️ Sorry, I encountered an error. Please check that the AI API keys are configured in settings.',
+      content,
       timestamp: new Date()
     }
     setMessages(prev => [...prev, errorMessage])
@@ -229,22 +257,72 @@ How can I assist you today?`,
 
   const getCurrentLocation = async (): Promise<{ lat: number; lng: number; name?: string }> => {
     return new Promise((resolve) => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            resolve({
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            })
-          },
-          () => {
-            // Fallback to default location
-            resolve({ lat: 37.7749, lng: -122.4194, name: 'San Francisco' })
-          }
-        )
-      } else {
-        resolve({ lat: 37.7749, lng: -122.4194, name: 'San Francisco' })
+      if (!navigator.geolocation) {
+        console.warn('Geolocation not supported')
+        resolve({ lat: 37.7749, lng: -122.4194, name: 'San Francisco (default)' })
+        return
       }
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords
+          
+          // Try to get location name using reverse geocoding (optional)
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+            )
+            if (response.ok) {
+              const data: GeocodingResponse = await response.json()
+              const address = data?.address || {}
+              const city = address.city || address.town || address.village
+              const state = address.state
+              const country = address.country
+              const name = [city, state, country].filter(Boolean).join(', ')
+              
+              resolve({
+                lat: latitude,
+                lng: longitude,
+                name: name || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
+              })
+            } else {
+              resolve({
+                lat: latitude,
+                lng: longitude,
+                name: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
+              })
+            }
+          } catch (error) {
+            console.error('Reverse geocoding failed:', error)
+            resolve({
+              lat: latitude,
+              lng: longitude,
+              name: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
+            })
+          }
+        },
+        (error) => {
+          console.error('Geolocation error:', error)
+          let errorMessage = 'Location unavailable'
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage = 'Location permission denied'
+              break
+            case error.POSITION_UNAVAILABLE:
+              errorMessage = 'Location unavailable'
+              break
+            case error.TIMEOUT:
+              errorMessage = 'Location request timed out'
+              break
+          }
+          resolve({ lat: 37.7749, lng: -122.4194, name: `San Francisco (${errorMessage})` })
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000 // Cache location for 5 minutes
+        }
+      )
     })
   }
 
@@ -430,11 +508,22 @@ How can I assist you today?`,
                       {message.location && (
                         <Badge variant="outline" size="sm">
                           <MapPin size={10} />
-                          <span className={css({ ml: 1 })}>Location</span>
+                          <span className={css({ ml: 1 })}>
+                            {message.location.name || 'Location shared'}
+                          </span>
                         </Badge>
                       )}
                       {message.streaming && (
-                        <Spinner size="xs" />
+                        <Badge variant="subtle" size="sm">
+                          <div className={css({ 
+                            w: 1.5, 
+                            h: 1.5, 
+                            bg: 'green.500', 
+                            borderRadius: 'full',
+                            animation: 'pulse 1s infinite' 
+                          })} />
+                          <span className={css({ ml: 1 })}>Streaming</span>
+                        </Badge>
                       )}
                     </HStack>
 
