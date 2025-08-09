@@ -5,6 +5,11 @@ name = "mychat"
 main = "src/index.js"
 compatibility_date = "2025-01-01"  # Use latest compatibility date
 
+# Build configuration - Cloudflare will run this command before deployment
+[build]
+command = "VITE_GOOGLE_CLIENT_ID=408880521733-e8ihlauq0ueonk84dsfikiolhfvft8h1.apps.googleusercontent.com npm run build"
+
+
 # Static Assets Configuration (2025 standard)
 [assets]
 directory = "./dist"
@@ -22,6 +27,7 @@ enabled = true  # Enable for debugging OAuth issues, disable once stable
 [vars]
 # Default variables (overridden by environment-specific vars)
 FRONTEND_URL = "https://mychat.current.space"
+VITE_GOOGLE_CLIENT_ID = "408880521733-e8ihlauq0ueonk84dsfikiolhfvft8h1.apps.googleusercontent.com"
 
 # OAuth Configuration - Set these as secrets in Cloudflare dashboard:
 # GOOGLE_CLIENT_ID = "your-client-id"
@@ -41,6 +47,7 @@ FRONTEND_URL = "http://localhost:5173"
 # Production environment
 [env.production.vars]
 FRONTEND_URL = "https://mychat.current.space"
+VITE_GOOGLE_CLIENT_ID = "408880521733-e8ihlauq0ueonk84dsfikiolhfvft8h1.apps.googleusercontent.com"
 
 # Preview/staging environment
 [env.preview.vars]
