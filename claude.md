@@ -264,3 +264,10 @@ return (
 }
 
 Always adhere to these patterns. If you generate code or architecture, reference this doc and follow its conventions. If I ask about setup, patterns, or best practices, answer in this context.
+
+# TypeScript Rules
+NEVER use 'any' type to coerce types in TypeScript
+Always use proper type definitions and interfaces
+Use type assertions sparingly and only when necessary with proper typing
+Prefer unknown over any when type is truly unknown
+Use proper type guards and type narrowing techniques

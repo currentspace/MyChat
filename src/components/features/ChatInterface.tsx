@@ -83,7 +83,7 @@ export function ChatInterface({ user }: ChatInterfaceProps) {
         throw new Error('Failed to get response')
       }
 
-      const data = await response.json()
+      const data: { response: string } = await response.json()
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
