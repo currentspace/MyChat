@@ -1,4 +1,5 @@
 import { useState, useRef, FormEvent, useEffect } from 'react'
+import { useNavigate } from '@tanstack/react-router'
 import { Box, VStack, HStack, Grid, Flex, Container } from '@/styled-system/jsx'
 import { Button } from '@/components/ui/styled/button'
 import { Textarea } from '@/components/ui/styled/textarea'
@@ -11,7 +12,7 @@ import {
   Send, MapPin, User, Settings, Plus, Copy, 
   ThumbsUp, ThumbsDown, RefreshCw, Sparkles, 
   MessageSquare, Trash2, Edit3, Check, X, 
-  Code, Zap, Brain
+  Code, Zap, Brain, LogOut, Menu
 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
@@ -52,6 +53,7 @@ interface GeocodingResponse {
 }
 
 export function ModernChatInterface({ user }: ModernChatInterfaceProps) {
+  const navigate = useNavigate()
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -79,6 +81,7 @@ How can I assist you today?`,
   const [sessions, setSessions] = useState<ChatSession[]>([])
   const [currentSessionId, setCurrentSessionId] = useState<string>()
   const [showSettings, setShowSettings] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -101,6 +104,25 @@ How can I assist you today?`,
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      })
+      
+      if (response.ok) {
+        // Clear local storage
+        localStorage.removeItem('chat_sessions')
+        localStorage.removeItem('current_session_id')
+        // Navigate back to home
+        navigate({ to: '/' })
+      }
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
   }
 
   const handleSubmit = async (e?: FormEvent) => {
@@ -384,6 +406,7 @@ How can I assist you today?`,
   }
 
   return (
+    <>
     <Grid gridTemplateColumns={{ base: '1fr', lg: '280px 1fr 280px' }} h="100vh" bg="background">
       {/* Left Sidebar - Chat History */}
       <Box 
@@ -455,6 +478,49 @@ How can I assist you today?`,
 
       {/* Main Chat Area */}
       <Flex flexDirection="column" h="full" position="relative">
+        {/* Mobile Header */}
+        <Box 
+          className={css({ 
+            display: { base: 'flex', lg: 'none' },
+            borderBottom: '1px solid',
+            borderColor: 'border.default',
+            bg: 'white',
+            _dark: { bg: 'gray.900' },
+            position: 'sticky',
+            top: 0,
+            zIndex: 10
+          })}
+        >
+          <HStack justify="space-between" p="3" w="full">
+            <HStack gap="2">
+              <IconButton
+                variant="ghost"
+                size="sm"
+                onClick={startNewChat}
+                aria-label="New chat"
+              >
+                <Plus size={20} />
+              </IconButton>
+              <span className={css({ fontWeight: 'semibold' })}>MyChat</span>
+            </HStack>
+            <HStack gap="2">
+              <Avatar.Root size="sm">
+                <Avatar.Image src={user.picture} alt={user.name} />
+                <Avatar.Fallback>
+                  <User size={16} />
+                </Avatar.Fallback>
+              </Avatar.Root>
+              <IconButton
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                aria-label="Menu"
+              >
+                <Menu size={20} />
+              </IconButton>
+            </HStack>
+          </HStack>
+        </Box>
         {/* Chat Messages */}
         <Box 
           flex="1" 
@@ -860,119 +926,423 @@ How can I assist you today?`,
       </Flex>
 
       {/* Right Sidebar - Settings */}
-      <Box 
+      <Flex 
+        flexDirection="column"
+        h="full"
         className={css({ 
-          display: { base: 'none', lg: 'block' },
+          display: { base: 'none', lg: 'flex' },
           borderLeft: '1px solid',
           borderColor: 'border.default',
           bg: 'gray.50',
           _dark: { bg: 'gray.900' }
         })}
       >
-        <VStack gap="4" p="4">
+        {/* Settings Header */}
+        <Box p="4" borderBottom="1px solid" borderColor="border.default">
           <HStack justify="space-between" w="full">
-            <span className={css({ fontWeight: 'semibold' })}>Settings</span>
+            <span className={css({ fontWeight: 'semibold', fontSize: 'lg' })}>Settings</span>
             <IconButton 
               variant="ghost" 
-              size="xs"
+              size="sm"
               onClick={() => setShowSettings(!showSettings)}
               aria-label="Toggle settings"
             >
-              <Settings size={16} />
+              <Settings size={18} />
             </IconButton>
           </HStack>
+        </Box>
 
-          <VStack gap="3" alignItems="stretch">
+        {/* Settings Content - Scrollable */}
+        <Box flex="1" overflowY="auto" p="4">
+          <VStack gap="4" alignItems="stretch">
+            {/* Model Selection */}
             <Box>
               <p className={css({ fontSize: 'sm', fontWeight: 'medium', mb: 2 })}>
-                Model
+                AI Model
               </p>
               <VStack gap="1" alignItems="stretch">
                 <Button 
                   variant={aiProvider === 'openai' ? 'solid' : 'outline'} 
-                  size="xs"
+                  size="sm"
                   onClick={() => setAiProvider('openai')}
                   justifyContent="start"
                 >
-                  <Sparkles size={14} />
+                  <Sparkles size={16} />
                   GPT-4 Turbo
                 </Button>
                 <Button 
                   variant={aiProvider === 'anthropic' ? 'solid' : 'outline'} 
-                  size="xs"
+                  size="sm"
                   onClick={() => setAiProvider('anthropic')}
                   justifyContent="start"
                 >
-                  <Brain size={14} />
+                  <Brain size={16} />
                   Claude 3 Opus
                 </Button>
               </VStack>
             </Box>
 
+            {/* Features */}
             <Box>
               <p className={css({ fontSize: 'sm', fontWeight: 'medium', mb: 2 })}>
                 Features
               </p>
-              <VStack gap="2" alignItems="start">
-                <Badge variant="outline" size="sm">
-                  <MapPin size={12} />
-                  <span className={css({ ml: 1 })}>
-                    {showLocation ? 'Location ON' : 'Location OFF'}
-                  </span>
-                </Badge>
-                <Badge variant="outline" size="sm">
-                  <Zap size={12} />
-                  <span className={css({ ml: 1 })}>
-                    {isStreaming ? 'Streaming ON' : 'Streaming OFF'}
-                  </span>
-                </Badge>
-                <Badge variant="outline" size="sm">
-                  <Code size={12} />
-                  <span className={css({ ml: 1 })}>Code Highlighting</span>
-                </Badge>
+              <VStack gap="2" alignItems="stretch">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowLocation(!showLocation)}
+                  justifyContent="space-between"
+                >
+                  <HStack gap="2">
+                    <MapPin size={14} />
+                    <span>Location</span>
+                  </HStack>
+                  <Badge variant={showLocation ? 'solid' : 'subtle'} size="sm">
+                    {showLocation ? 'ON' : 'OFF'}
+                  </Badge>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsStreaming(!isStreaming)}
+                  justifyContent="space-between"
+                >
+                  <HStack gap="2">
+                    <Zap size={14} />
+                    <span>Streaming</span>
+                  </HStack>
+                  <Badge variant={isStreaming ? 'solid' : 'subtle'} size="sm">
+                    {isStreaming ? 'ON' : 'OFF'}
+                  </Badge>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled
+                  justifyContent="space-between"
+                >
+                  <HStack gap="2">
+                    <Code size={14} />
+                    <span>Syntax Highlight</span>
+                  </HStack>
+                  <Badge variant="solid" size="sm">ON</Badge>
+                </Button>
               </VStack>
             </Box>
 
+            {/* Usage Stats */}
             <Box>
               <p className={css({ fontSize: 'sm', fontWeight: 'medium', mb: 2 })}>
                 Usage
               </p>
-              <VStack gap="1" alignItems="stretch">
-                <HStack justify="space-between">
-                  <span className={css({ fontSize: 'xs', color: 'fg.muted' })}>
-                    Messages
-                  </span>
-                  <span className={css({ fontSize: 'xs', fontWeight: 'medium' })}>
-                    {messages.length}
-                  </span>
-                </HStack>
-                <HStack justify="space-between">
-                  <span className={css({ fontSize: 'xs', color: 'fg.muted' })}>
-                    Session
-                  </span>
-                  <span className={css({ fontSize: 'xs', fontWeight: 'medium' })}>
-                    {currentSessionId?.slice(0, 8)}...
-                  </span>
-                </HStack>
-              </VStack>
+              <Box 
+                p="3" 
+                borderRadius="md" 
+                bg="gray.100"
+                _dark={{ bg: 'gray.800' }}
+              >
+                <VStack gap="2" alignItems="stretch">
+                  <HStack justify="space-between">
+                    <span className={css({ fontSize: 'xs', color: 'fg.muted' })}>
+                      Messages
+                    </span>
+                    <span className={css({ fontSize: 'sm', fontWeight: 'semibold' })}>
+                      {messages.length}
+                    </span>
+                  </HStack>
+                  <HStack justify="space-between">
+                    <span className={css({ fontSize: 'xs', color: 'fg.muted' })}>
+                      Session ID
+                    </span>
+                    <span className={css({ fontSize: 'xs', fontFamily: 'mono' })}>
+                      {currentSessionId?.slice(0, 8)}...
+                    </span>
+                  </HStack>
+                  <HStack justify="space-between">
+                    <span className={css({ fontSize: 'xs', color: 'fg.muted' })}>
+                      Provider
+                    </span>
+                    <span className={css({ fontSize: 'xs', fontWeight: 'medium' })}>
+                      {aiProvider === 'anthropic' ? 'Claude' : 'OpenAI'}
+                    </span>
+                  </HStack>
+                </VStack>
+              </Box>
             </Box>
 
+            {/* Clear History */}
             <Button 
               variant="outline" 
-              size="xs" 
+              size="sm" 
               w="full"
               onClick={() => {
-                if (confirm('Clear all messages?')) {
-                  setMessages([])
+                if (confirm('This will clear all messages in the current session. Continue?')) {
+                  setMessages([{
+                    id: '1',
+                    role: 'assistant',
+                    content: `Chat history cleared. How can I help you today?`,
+                    timestamp: new Date(),
+                    provider: aiProvider
+                  }])
                 }
               }}
             >
               <Trash2 size={14} />
-              Clear History
+              Clear Chat History
             </Button>
           </VStack>
-        </VStack>
-      </Box>
+        </Box>
+
+        {/* User Profile Section - Fixed at bottom */}
+        <Box 
+          p="4" 
+          borderTop="1px solid" 
+          borderColor="border.default"
+          bg="white"
+          _dark={{ bg: 'gray.950' }}
+        >
+          <VStack gap="3">
+            <HStack gap="3" w="full">
+              <Avatar.Root size="md">
+                <Avatar.Image src={user.picture} alt={user.name} />
+                <Avatar.Fallback>
+                  <User size={20} />
+                </Avatar.Fallback>
+              </Avatar.Root>
+              <VStack gap="0" alignItems="start" flex="1">
+                <span className={css({ fontSize: 'sm', fontWeight: 'semibold' })}>
+                  {user.name}
+                </span>
+                <span className={css({ fontSize: 'xs', color: 'fg.muted' })}>
+                  Signed in with Google
+                </span>
+              </VStack>
+            </HStack>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              w="full"
+              onClick={handleLogout}
+              className={css({
+                borderColor: 'red.200',
+                color: 'red.600',
+                _hover: {
+                  bg: 'red.50',
+                  borderColor: 'red.300'
+                },
+                _dark: {
+                  borderColor: 'red.800',
+                  color: 'red.400',
+                  _hover: {
+                    bg: 'red.950',
+                    borderColor: 'red.700'
+                  }
+                }
+              })}
+            >
+              <LogOut size={16} />
+              Sign out
+            </Button>
+          </VStack>
+        </Box>
+      </Flex>
     </Grid>
+
+    {/* Mobile Menu Overlay */}
+    {showMobileMenu && (
+      <Box
+        className={css({
+          display: { base: 'block', lg: 'none' },
+          position: 'fixed',
+          inset: 0,
+          zIndex: 50,
+          bg: 'rgba(0, 0, 0, 0.5)',
+          backdropFilter: 'blur(4px)'
+        })}
+        onClick={() => setShowMobileMenu(false)}
+      >
+        <Box
+          className={css({
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            bottom: 0,
+            w: '80%',
+            maxW: '320px',
+            bg: 'white',
+            _dark: { bg: 'gray.900' },
+            boxShadow: 'xl',
+            overflowY: 'auto'
+          })}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Flex flexDirection="column" h="full">
+            {/* Mobile Menu Header */}
+            <Box p="4" borderBottom="1px solid" borderColor="border.default">
+              <HStack justify="space-between">
+                <span className={css({ fontWeight: 'semibold', fontSize: 'lg' })}>Settings</span>
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowMobileMenu(false)}
+                  aria-label="Close menu"
+                >
+                  <X size={20} />
+                </IconButton>
+              </HStack>
+            </Box>
+
+            {/* Mobile Menu Content */}
+            <Box flex="1" overflowY="auto" p="4">
+              <VStack gap="4" alignItems="stretch">
+                {/* Model Selection */}
+                <Box>
+                  <p className={css({ fontSize: 'sm', fontWeight: 'medium', mb: 2 })}>
+                    AI Model
+                  </p>
+                  <VStack gap="1" alignItems="stretch">
+                    <Button 
+                      variant={aiProvider === 'openai' ? 'solid' : 'outline'} 
+                      size="sm"
+                      onClick={() => setAiProvider('openai')}
+                      justifyContent="start"
+                    >
+                      <Sparkles size={16} />
+                      GPT-4 Turbo
+                    </Button>
+                    <Button 
+                      variant={aiProvider === 'anthropic' ? 'solid' : 'outline'} 
+                      size="sm"
+                      onClick={() => setAiProvider('anthropic')}
+                      justifyContent="start"
+                    >
+                      <Brain size={16} />
+                      Claude 3 Opus
+                    </Button>
+                  </VStack>
+                </Box>
+
+                {/* Features */}
+                <Box>
+                  <p className={css({ fontSize: 'sm', fontWeight: 'medium', mb: 2 })}>
+                    Features
+                  </p>
+                  <VStack gap="2" alignItems="stretch">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowLocation(!showLocation)}
+                      justifyContent="space-between"
+                    >
+                      <HStack gap="2">
+                        <MapPin size={14} />
+                        <span>Location</span>
+                      </HStack>
+                      <Badge variant={showLocation ? 'solid' : 'subtle'} size="sm">
+                        {showLocation ? 'ON' : 'OFF'}
+                      </Badge>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsStreaming(!isStreaming)}
+                      justifyContent="space-between"
+                    >
+                      <HStack gap="2">
+                        <Zap size={14} />
+                        <span>Streaming</span>
+                      </HStack>
+                      <Badge variant={isStreaming ? 'solid' : 'subtle'} size="sm">
+                        {isStreaming ? 'ON' : 'OFF'}
+                      </Badge>
+                    </Button>
+                  </VStack>
+                </Box>
+
+                {/* Clear History */}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  w="full"
+                  onClick={() => {
+                    if (confirm('This will clear all messages in the current session. Continue?')) {
+                      setMessages([{
+                        id: '1',
+                        role: 'assistant',
+                        content: `Chat history cleared. How can I help you today?`,
+                        timestamp: new Date(),
+                        provider: aiProvider
+                      }])
+                      setShowMobileMenu(false)
+                    }
+                  }}
+                >
+                  <Trash2 size={14} />
+                  Clear Chat History
+                </Button>
+              </VStack>
+            </Box>
+
+            {/* Mobile User Profile - Fixed at bottom */}
+            <Box 
+              p="4" 
+              borderTop="1px solid" 
+              borderColor="border.default"
+              bg="gray.50"
+              _dark={{ bg: 'gray.950' }}
+            >
+              <VStack gap="3">
+                <HStack gap="3" w="full">
+                  <Avatar.Root size="md">
+                    <Avatar.Image src={user.picture} alt={user.name} />
+                    <Avatar.Fallback>
+                      <User size={20} />
+                    </Avatar.Fallback>
+                  </Avatar.Root>
+                  <VStack gap="0" alignItems="start" flex="1">
+                    <span className={css({ fontSize: 'sm', fontWeight: 'semibold' })}>
+                      {user.name}
+                    </span>
+                    <span className={css({ fontSize: 'xs', color: 'fg.muted' })}>
+                      Signed in with Google
+                    </span>
+                  </VStack>
+                </HStack>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  w="full"
+                  onClick={() => {
+                    handleLogout()
+                    setShowMobileMenu(false)
+                  }}
+                  className={css({
+                    borderColor: 'red.200',
+                    color: 'red.600',
+                    _hover: {
+                      bg: 'red.50',
+                      borderColor: 'red.300'
+                    },
+                    _dark: {
+                      borderColor: 'red.800',
+                      color: 'red.400',
+                      _hover: {
+                        bg: 'red.950',
+                        borderColor: 'red.700'
+                      }
+                    }
+                  })}
+                >
+                  <LogOut size={16} />
+                  Sign out
+                </Button>
+              </VStack>
+            </Box>
+          </Flex>
+        </Box>
+      </Box>
+    )}
+    </>
   )
 }
