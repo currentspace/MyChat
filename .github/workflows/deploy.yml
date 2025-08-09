@@ -37,6 +37,7 @@ jobs:
         run: pnpm build
         env:
           NODE_ENV: production
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID_HERE' }}
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3

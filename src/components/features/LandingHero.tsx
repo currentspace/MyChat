@@ -77,24 +77,45 @@ export function LandingHero({ onGoogleSuccess, onGoogleError }: LandingHeroProps
                 <VStack gap="4">
                   <Text fontWeight="medium" fontSize="lg">Get started in seconds</Text>
                   
-                  <Box className={css({ 
-                    '& > div': { w: 'full' },
-                    '& iframe': { w: 'full !important' }
-                  })}>
-                    <GoogleLogin
-                      onSuccess={onGoogleSuccess}
-                      onError={onGoogleError}
-                      theme="outline"
-                      size="large"
-                      width="100%"
-                      text="continue_with"
-                      shape="rectangular"
-                    />
-                  </Box>
-                  
-                  <Text fontSize="xs" color="fg.muted" textAlign="center">
-                    Secure authentication with Google OAuth 2.0
-                  </Text>
+                  {import.meta.env.VITE_GOOGLE_CLIENT_ID && 
+                   import.meta.env.VITE_GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID_HERE' ? (
+                    <>
+                      <Box className={css({ 
+                        '& > div': { w: 'full' },
+                        '& iframe': { w: 'full !important' }
+                      })}>
+                        <GoogleLogin
+                          onSuccess={onGoogleSuccess}
+                          onError={onGoogleError}
+                          theme="outline"
+                          size="large"
+                          width="100%"
+                          text="continue_with"
+                          shape="rectangular"
+                        />
+                      </Box>
+                      
+                      <Text fontSize="xs" color="fg.muted" textAlign="center">
+                        Secure authentication with Google OAuth 2.0
+                      </Text>
+                    </>
+                  ) : (
+                    <VStack gap="3" p="4" borderRadius="md" bg="orange.50" _dark={{ bg: 'orange.900' }}>
+                      <Text fontSize="sm" fontWeight="medium" color="orange.800" _dark={{ color: 'orange.200' }}>
+                        OAuth Setup Required
+                      </Text>
+                      <Text fontSize="xs" color="orange.700" _dark={{ color: 'orange.300' }} textAlign="center">
+                        Google OAuth is not configured. Please follow the setup guide to enable sign-in.
+                      </Text>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => window.open('/OAUTH_SETUP.md', '_blank')}
+                      >
+                        View Setup Guide
+                      </Button>
+                    </VStack>
+                  )}
                 </VStack>
               </Box>
 

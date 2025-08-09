@@ -4,9 +4,9 @@ import { Box, Flex, VStack } from '@/styled-system/jsx'
 import { Spinner } from '@/components/ui'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 
-// Get client ID from environment or use fallback
-const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || 
-  '932490954187-iq92r9op3e7noq75fc9doruoamlq50bm.apps.googleusercontent.com'
+// Get client ID from environment
+// You must set VITE_GOOGLE_CLIENT_ID in .env.local or .env.production
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID_HERE'
 
 export const Route = createRootRoute({
   component: () => (
