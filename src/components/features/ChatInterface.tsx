@@ -36,13 +36,14 @@ export function ChatInterface({ user }: ChatInterfaceProps) {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [showLocation, setShowLocation] = useState(false)
+  const [aiProvider, setAiProvider] = useState<'openai' | 'anthropic'>('openai')
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!input.trim() || isLoading) return
 
@@ -58,18 +59,53 @@ export function ChatInterface({ user }: ChatInterfaceProps) {
     setInput('')
     setIsLoading(true)
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      // Get or create session ID
+      const sessionId = localStorage.getItem('chat_session_id') || crypto.randomUUID()
+      localStorage.setItem('chat_session_id', sessionId)
+
+      // Call the chat API
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: input,
+          sessionId,
+          location: userMessage.location,
+          provider: aiProvider
+        }),
+        credentials: 'include'
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to get response')
+      }
+
+      const data = await response.json()
+      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: `I understand you're asking about "${input}". This is a demo response. In a full implementation, this would connect to an AI service like OpenAI or Anthropic Claude to provide intelligent responses about locations, recommendations, and more.`,
+        content: data.response,
         timestamp: new Date()
       }
+      
       setMessages(prev => [...prev, assistantMessage])
+    } catch (error) {
+      console.error('Chat error:', error)
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'Sorry, I encountered an error. Please make sure the AI API keys are configured in Cloudflare settings.',
+        timestamp: new Date()
+      }
+      setMessages(prev => [...prev, errorMessage])
+    } finally {
       setIsLoading(false)
       scrollToBottom()
-    }, 1000)
+    }
   }
 
   return (
@@ -88,9 +124,24 @@ export function ChatInterface({ user }: ChatInterfaceProps) {
             
             <Box>
               <p className={css({ fontSize: 'sm', fontWeight: 'medium', mb: 2 })}>
-                AI Model
+                AI Provider
               </p>
-              <Badge variant="subtle">GPT-4</Badge>
+              <VStack gap="2" alignItems="stretch">
+                <Button 
+                  variant={aiProvider === 'openai' ? 'solid' : 'outline'} 
+                  size="xs"
+                  onClick={() => setAiProvider('openai')}
+                >
+                  OpenAI GPT-4
+                </Button>
+                <Button 
+                  variant={aiProvider === 'anthropic' ? 'solid' : 'outline'} 
+                  size="xs"
+                  onClick={() => setAiProvider('anthropic')}
+                >
+                  Anthropic Claude
+                </Button>
+              </VStack>
             </Box>
 
             <Box>

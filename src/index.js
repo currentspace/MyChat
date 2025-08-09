@@ -44,6 +44,12 @@ export default {
           return handleGetUser(request, env, corsHeaders);
         } else if (url.pathname === '/api/auth/logout' && request.method === 'POST') {
           return handleLogout(request, env, corsHeaders);
+        } else if (url.pathname === '/api/chat' && request.method === 'POST') {
+          const { handleChatMessage } = await import('./api/chat.js');
+          return handleChatMessage(request, env, corsHeaders);
+        } else if (url.pathname === '/api/chat/stream' && request.method === 'POST') {
+          const { handleChatStream } = await import('./api/chat.js');
+          return handleChatStream(request, env, corsHeaders);
         }
         
         console.log('Route not found:', url.pathname);
