@@ -1,12 +1,16 @@
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { Box, Flex, VStack } from '@/styled-system/jsx'
-import { Footer } from '@/components/features/Footer'
 import { Spinner } from '@/components/ui'
+import { GoogleOAuthProvider } from '@react-oauth/google'
+
+// Get client ID from environment or use fallback
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || 
+  '932490954187-iq92r9op3e7noq75fc9doruoamlq50bm.apps.googleusercontent.com'
 
 export const Route = createRootRoute({
   component: () => (
-    <Flex direction="column" minH="100vh" bg="bg.default">
+    <GoogleOAuthProvider clientId={clientId}>
       <Suspense fallback={
         <Flex 
           alignItems="center" 
@@ -19,11 +23,8 @@ export const Route = createRootRoute({
           </VStack>
         </Flex>
       }>
-        <Box flex="1">
-          <Outlet />
-        </Box>
-        <Footer />
+        <Outlet />
       </Suspense>
-    </Flex>
+    </GoogleOAuthProvider>
   ),
 })
