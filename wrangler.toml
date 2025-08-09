@@ -25,7 +25,6 @@ enabled = true  # Enable for debugging OAuth issues, disable once stable
 
 # Environment variables
 [vars]
-# Default variables (overridden by environment-specific vars)
 FRONTEND_URL = "https://mychat.current.space"
 VITE_GOOGLE_CLIENT_ID = "408880521733-e8ihlauq0ueonk84dsfikiolhfvft8h1.apps.googleusercontent.com"
 
@@ -40,18 +39,6 @@ VITE_GOOGLE_CLIENT_ID = "408880521733-e8ihlauq0ueonk84dsfikiolhfvft8h1.apps.goog
 # ANTHROPIC_API_KEY = "sk-ant-..."
 # ANTHROPIC_MODEL = "claude-3-opus-20240229"
 
-# Development environment
-[env.development.vars]
-FRONTEND_URL = "http://localhost:5173"
-
-# Production environment
-[env.production.vars]
-FRONTEND_URL = "https://mychat.current.space"
-VITE_GOOGLE_CLIENT_ID = "408880521733-e8ihlauq0ueonk84dsfikiolhfvft8h1.apps.googleusercontent.com"
-
-# Preview/staging environment
-[env.preview.vars]
-FRONTEND_URL = "https://preview.mychat.current.space"
 
 
 # Optional: KV namespace for chat history
