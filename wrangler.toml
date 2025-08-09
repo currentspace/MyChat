@@ -20,8 +20,8 @@ enabled = true  # Enable for debugging OAuth issues, disable once stable
 
 # Environment variables
 [vars]
-# Global variables available in all environments
-FRONTEND_URL = "http://localhost:5173"
+# Default variables (overridden by environment-specific vars)
+FRONTEND_URL = "https://mychat.current.space"
 
 # OAuth Configuration - Set these as secrets in Cloudflare dashboard:
 # GOOGLE_CLIENT_ID = "your-client-id"
