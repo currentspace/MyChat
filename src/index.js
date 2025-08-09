@@ -69,7 +69,23 @@ export default {
     // Serve static assets for all other routes
     // In 2025, this is the standard way - assets are automatically served
     // with proper caching and SPA support via not_found_handling config
-    return env.ASSETS.fetch(request);
+    const response = await env.ASSETS.fetch(request);
+    
+    // Add security headers for OAuth compatibility
+    const newHeaders = new Headers(response.headers);
+    
+    // Allow Google OAuth to work properly
+    if (url.pathname === '/' || url.pathname === '/index.html') {
+      // Set COOP to allow popups for OAuth
+      newHeaders.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+      newHeaders.set('Cross-Origin-Embedder-Policy', 'unsafe-none');
+    }
+    
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: newHeaders
+    });
   }
 };
 

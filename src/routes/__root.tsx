@@ -20,7 +20,17 @@ if (import.meta.env.DEV) {
 
 export const Route = createRootRoute({
   component: () => (
-    <GoogleOAuthProvider clientId={clientId}>
+    <GoogleOAuthProvider 
+      clientId={clientId}
+      onScriptLoadError={() => {
+        console.error('Failed to load Google Sign-In script')
+      }}
+      onScriptLoadSuccess={() => {
+        if (import.meta.env.DEV) {
+          console.log('Google Sign-In script loaded successfully')
+        }
+      }}
+    >
       <Suspense fallback={
         <Flex 
           alignItems="center" 
